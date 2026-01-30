@@ -14,21 +14,22 @@
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #f0f2f5;
-            padding: 20px;
+            padding: 15px;
         }
 
         .header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 30px;
+            padding: 20px;
             border-radius: 10px;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
 
         .header h1 {
-            font-size: 2em;
+            font-size: 1.5em;
             margin-bottom: 10px;
+            line-height: 1.3;
         }
 
         .back-link {
@@ -39,6 +40,7 @@
             gap: 5px;
             margin-top: 10px;
             opacity: 0.9;
+            font-size: 0.95em;
         }
 
         .back-link:hover {
@@ -47,7 +49,7 @@
 
         .form-container {
             background: white;
-            padding: 40px;
+            padding: 20px;
             border-radius: 10px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             max-width: 1200px;
@@ -55,8 +57,8 @@
         }
 
         .form-section {
-            margin-bottom: 40px;
-            padding-bottom: 30px;
+            margin-bottom: 30px;
+            padding-bottom: 25px;
             border-bottom: 2px solid #e0e0e0;
         }
 
@@ -67,16 +69,16 @@
         .form-section h2 {
             color: #667eea;
             margin-bottom: 20px;
-            font-size: 1.5em;
+            font-size: 1.3em;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         .form-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
+            grid-template-columns: 1fr;
+            gap: 18px;
         }
 
         .form-grid-full {
@@ -109,9 +111,18 @@
             padding: 12px;
             border: 2px solid #e0e0e0;
             border-radius: 6px;
-            font-size: 14px;
+            font-size: 16px;
             font-family: inherit;
             transition: border 0.3s;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        select {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 35px;
         }
 
         input:focus,
@@ -127,7 +138,7 @@
         }
 
         .btn {
-            padding: 14px 28px;
+            padding: 14px 24px;
             border: none;
             border-radius: 6px;
             font-size: 16px;
@@ -136,6 +147,8 @@
             transition: all 0.3s;
             text-decoration: none;
             display: inline-block;
+            text-align: center;
+            width: 100%;
         }
 
         .btn-primary {
@@ -160,16 +173,17 @@
 
         .form-actions {
             display: flex;
-            gap: 15px;
-            margin-top: 30px;
-            justify-content: flex-end;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 25px;
         }
 
         .alert {
-            padding: 15px 20px;
+            padding: 15px 18px;
             border-radius: 6px;
             margin-bottom: 20px;
             display: none;
+            font-size: 0.95em;
         }
 
         .alert-success {
@@ -202,6 +216,7 @@
             padding: 30px;
             border-radius: 10px;
             text-align: center;
+            margin: 0 20px;
         }
 
         .spinner {
@@ -223,6 +238,195 @@
             font-size: 0.85em;
             color: #718096;
             margin-top: 5px;
+        }
+
+        .checkbox-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .checkbox-grid label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 400;
+            padding: 10px;
+            background: #f7fafc;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .checkbox-grid label:hover {
+            background: #edf2f7;
+        }
+
+        .checkbox-grid input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        /* Tablet styles */
+        @media (min-width: 600px) {
+            body {
+                padding: 20px;
+            }
+
+            .header {
+                padding: 25px;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .form-container {
+                padding: 30px;
+            }
+
+            .form-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+            }
+
+            .checkbox-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .btn {
+                width: auto;
+                min-width: 180px;
+            }
+
+            .form-actions {
+                flex-direction: row;
+                justify-content: flex-end;
+            }
+        }
+
+        /* Desktop styles */
+        @media (min-width: 1024px) {
+            body {
+                padding: 20px;
+            }
+
+            .header {
+                padding: 30px;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .form-container {
+                padding: 40px;
+            }
+
+            .form-section {
+                margin-bottom: 40px;
+                padding-bottom: 30px;
+            }
+
+            .form-section h2 {
+                font-size: 1.5em;
+                gap: 10px;
+            }
+
+            .form-grid {
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            }
+
+            .checkbox-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 10px;
+            }
+
+            .checkbox-grid label {
+                padding: 8px;
+                gap: 8px;
+            }
+
+            input[type="text"],
+            input[type="number"],
+            input[type="date"],
+            input[type="time"],
+            select,
+            textarea {
+                font-size: 14px;
+            }
+
+            .btn {
+                font-size: 16px;
+            }
+        }
+
+        /* Mejoras para accesibilidad en móvil */
+        @media (max-width: 599px) {
+            /* Asegurar que los inputs sean lo suficientemente grandes para tocar */
+            input[type="text"],
+            input[type="number"],
+            input[type="date"],
+            input[type="time"],
+            select,
+            textarea {
+                min-height: 48px;
+            }
+
+            /* Mejorar espaciado en secciones */
+            .form-section h2 {
+                font-size: 1.2em;
+            }
+
+            /* Hacer los checkboxes más fáciles de tocar */
+            .checkbox-grid label {
+                min-height: 48px;
+            }
+
+            .checkbox-grid input[type="checkbox"] {
+                width: 24px;
+                height: 24px;
+            }
+
+            /* Scroll suave */
+            html {
+                scroll-behavior: smooth;
+            }
+        }
+
+        /* Prevenir zoom en inputs en iOS */
+        @media screen and (max-width: 767px) {
+            input[type="text"],
+            input[type="number"],
+            input[type="date"],
+            input[type="time"],
+            select,
+            textarea {
+                font-size: 16px !important;
+            }
+        }
+
+        /* Mejoras para landscape en móvil */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .header {
+                padding: 15px;
+                margin-bottom: 15px;
+            }
+
+            .header h1 {
+                font-size: 1.2em;
+            }
+
+            .form-section {
+                margin-bottom: 20px;
+                padding-bottom: 20px;
+            }
+
+            .form-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
     </style>
 </head>
@@ -305,44 +509,44 @@
                     
                     <div class="form-group form-grid-full">
                         <label>Comorbilidades</label>
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-bottom: 10px;">
-                            <label style="display: flex; align-items: center; gap: 8px;">
+                        <div class="checkbox-grid">
+                            <label>
                                 <input type="checkbox" name="comorbilidades[]" value="Hipertensión Arterial">
                                 <span>Hipertensión Arterial</span>
                             </label>
-                            <label style="display: flex; align-items: center; gap: 8px;">
+                            <label>
                                 <input type="checkbox" name="comorbilidades[]" value="Diabetes Mellitus">
                                 <span>Diabetes Mellitus</span>
                             </label>
-                            <label style="display: flex; align-items: center; gap: 8px;">
+                            <label>
                                 <input type="checkbox" name="comorbilidades[]" value="Enfermedad Renal Crónica">
                                 <span>Enfermedad Renal Crónica</span>
                             </label>
-                            <label style="display: flex; align-items: center; gap: 8px;">
+                            <label>
                                 <input type="checkbox" name="comorbilidades[]" value="EPOC">
                                 <span>EPOC</span>
                             </label>
-                            <label style="display: flex; align-items: center; gap: 8px;">
+                            <label>
                                 <input type="checkbox" name="comorbilidades[]" value="Dislipidemia">
                                 <span>Dislipidemia</span>
                             </label>
-                            <label style="display: flex; align-items: center; gap: 8px;">
+                            <label>
                                 <input type="checkbox" name="comorbilidades[]" value="Fibrilación Auricular">
                                 <span>Fibrilación Auricular</span>
                             </label>
-                            <label style="display: flex; align-items: center; gap: 8px;">
+                            <label>
                                 <input type="checkbox" name="comorbilidades[]" value="Obesidad">
                                 <span>Obesidad</span>
                             </label>
-                            <label style="display: flex; align-items: center; gap: 8px;">
+                            <label>
                                 <input type="checkbox" name="comorbilidades[]" value="Tabaquismo">
                                 <span>Tabaquismo</span>
                             </label>
-                            <label style="display: flex; align-items: center; gap: 8px;">
+                            <label>
                                 <input type="checkbox" name="comorbilidades[]" value="ACV Previo">
                                 <span>ACV Previo</span>
                             </label>
-                            <label style="display: flex; align-items: center; gap: 8px;">
+                            <label>
                                 <input type="checkbox" name="comorbilidades[]" value="Infarto Previo">
                                 <span>Infarto Previo</span>
                             </label>
@@ -585,8 +789,8 @@
             </div>
 
             <div class="form-actions">
-                <a href="/" class="btn btn-secondary">Cancelar</a>
                 <button type="submit" class="btn btn-primary" id="submitBtn">💾 Guardar Cirugía</button>
+                <a href="/" class="btn btn-secondary">Cancelar</a>
             </div>
         </form>
     </div>
