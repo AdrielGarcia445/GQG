@@ -17,7 +17,7 @@ app = Flask(__name__)
 app.secret_key = 'tu-clave-secreta-super-segura-cambiame-12345'
 
 # Contraseña del sistema (cámbiala por la que prefieras)
-SISTEMA_PASSWORD = 'cardiovascular2024'
+SISTEMA_PASSWORD = 'adrielSofi04'
 
 # ============================================================================
 # INICIALIZACIÓN DE FIREBASE
