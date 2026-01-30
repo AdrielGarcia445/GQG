@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>G.Q.G - Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f2f5;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+
+        .controls {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .controls-row {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        input[type="text"], input[type="date"], select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border 0.3s;
+        }
+
+        input[type="text"]:focus, input[type="date"]:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-success {
+            background: #48bb78;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #38a169;
+        }
+
+        .btn-danger {
+            background: #f56565;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #e53e3e;
+        }
+
+        .btn-secondary {
+            background: #718096;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #4a5568;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            color: #667eea;
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            color: #718096;
+            font-size: 0.9em;
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #667eea;
+            color: white;
+        }
+
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.9em;
+            text-transform: uppercase;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        tbody tr:hover {
+            background: #f7fafc;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .badge-warning {
+            background: #feebc8;
+            color: #7c2d12;
+        }
+
+        .badge-danger {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        .badge-info {
+            background: #bee3f8;
+            color: #1a365d;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #718096;
+        }
+
+        .empty-state svg {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #667eea;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .filter-group label {
+            font-size: 0.9em;
+            color: #4a5568;
+            white-space: nowrap;
+        }
+
+        .filter-group select, .filter-group input {
+            min-width: 150px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🫀 G.Q.G</h1>
+        <p>Gestor Quirúrgico García - Sistema de Registro de Cirugías Cardiovasculares</p>
+    </div>
+
+    <div class="stats">
+        <div class="stat-card">
+            <h3 id="totalCirugias">0</h3>
+            <p>Total Cirugías</p>
+        </div>
+        <div class="stat-card">
+            <h3 id="cirugiasMes">0</h3>
+            <p>Este Mes</p>
+        </div>
+        <div class="stat-card">
+            <h3 id="pacientesUnicos">0</h3>
+            <p>Pacientes Únicos</p>
+        </div>
+    </div>
+
+    <div class="controls">
+        <div class="controls-row" style="margin-bottom: 15px;">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="🔍 Buscar por paciente, procedimiento, cirujano...">
+            </div>
+            <a href="/form" class="btn btn-primary">➕ Nueva Cirugía</a>
+            <button class="btn btn-success" onclick="exportarExcel()">📊 Exportar Excel</button>
+        </div>
+        
+        <div class="controls-row">
+            <div class="filter-group">
+                <label>Fecha desde:</label>
+                <input type="date" id="fechaDesde">
+            </div>
+            <div class="filter-group">
+                <label>Fecha hasta:</label>
+                <input type="date" id="fechaHasta">
+            </div>
+            <div class="filter-group">
+                <label>Estado:</label>
+                <select id="filtroEstado">
+                    <option value="">Todos</option>
+                    <option value="Exitosa">Exitosa</option>
+                    <option value="Complicaciones">Complicaciones</option>
+                    <option value="En Recuperación">En Recuperación</option>
+                </select>
+            </div>
+            <button class="btn btn-secondary" onclick="limpiarFiltros()">🔄 Limpiar</button>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <div id="loadingState" class="loading">
+            <div class="spinner"></div>
+            <p>Cargando cirugías...</p>
+        </div>
+
+        <div id="emptyState" class="empty-state" style="display: none;">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <h2>No hay cirugías registradas</h2>
+            <p>Comienza agregando tu primera cirugía</p>
+            <br>
+            <a href="/form" class="btn btn-primary">➕ Registrar Primera Cirugía</a>
+        </div>
+
+        <table id="cirugiasTable" style="display: none;">
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Paciente</th>
+                    <th>Edad</th>
+                    <th>Procedimiento</th>
+                    <th>Cirujano</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="cirugiasBody">
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        let cirugiasData = [];
+        let cirugiasFiltered = [];
+
+        // Cargar cirugías al iniciar
+        document.addEventListener('DOMContentLoaded', () => {
+            cargarCirugias();
+            
+            // Event listeners para búsqueda y filtros
+            document.getElementById('searchInput').addEventListener('input', aplicarFiltros);
+            document.getElementById('fechaDesde').addEventListener('change', aplicarFiltros);
+            document.getElementById('fechaHasta').addEventListener('change', aplicarFiltros);
+            document.getElementById('filtroEstado').addEventListener('change', aplicarFiltros);
+        });
+
+        async function cargarCirugias() {
+            try {
+                const response = await fetch('/api/cirugias');
+                const result = await response.json();
+                
+                if (result.success) {
+                    cirugiasData = result.data;
+                    cirugiasFiltered = [...cirugiasData];
+                    renderizarCirugias();
+                    actualizarEstadisticas();
+                } else {
+                    mostrarError('Error al cargar cirugías: ' + result.error);
+                }
+            } catch (error) {
+                mostrarError('Error de conexión: ' + error.message);
+            }
+        }
+
+        function renderizarCirugias() {
+            const loadingState = document.getElementById('loadingState');
+            const emptyState = document.getElementById('emptyState');
+            const table = document.getElementById('cirugiasTable');
+            const tbody = document.getElementById('cirugiasBody');
+
+            loadingState.style.display = 'none';
+
+            if (cirugiasFiltered.length === 0) {
+                emptyState.style.display = 'block';
+                table.style.display = 'none';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+            table.style.display = 'table';
+
+            tbody.innerHTML = cirugiasFiltered.map(cirugia => `
+                <tr>
+                    <td>${formatearFecha(cirugia.fecha_cirugia)}</td>
+                    <td><strong>${cirugia.nombre_paciente || 'Sin nombre'}</strong></td>
+                    <td>${cirugia.edad || '-'} años</td>
+                    <td>${cirugia.procedimiento || '-'}</td>
+                    <td>${cirugia.cirujano_principal || '-'}</td>
+                    <td>${obtenerBadgeEstado(cirugia.estado_postoperatorio)}</td>
+                    <td class="action-buttons">
+                        <button class="btn btn-primary btn-small" onclick="editarCirugia('${cirugia.id}')">✏️ Editar</button>
+                        <button class="btn btn-danger btn-small" onclick="eliminarCirugia('${cirugia.id}', '${cirugia.nombre_paciente}')">🗑️</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function aplicarFiltros() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const fechaDesde = document.getElementById('fechaDesde').value;
+            const fechaHasta = document.getElementById('fechaHasta').value;
+            const estadoFiltro = document.getElementById('filtroEstado').value;
+
+            cirugiasFiltered = cirugiasData.filter(cirugia => {
+                // Búsqueda por texto
+                const matchSearch = !searchTerm || 
+                    (cirugia.nombre_paciente || '').toLowerCase().includes(searchTerm) ||
+                    (cirugia.procedimiento || '').toLowerCase().includes(searchTerm) ||
+                    (cirugia.cirujano_principal || '').toLowerCase().includes(searchTerm) ||
+                    (cirugia.diagnostico || '').toLowerCase().includes(searchTerm);
+
+                // Filtro por fecha desde
+                const matchFechaDesde = !fechaDesde || cirugia.fecha_cirugia >= fechaDesde;
+
+                // Filtro por fecha hasta
+                const matchFechaHasta = !fechaHasta || cirugia.fecha_cirugia <= fechaHasta;
+
+                // Filtro por estado
+                const matchEstado = !estadoFiltro || cirugia.estado_postoperatorio === estadoFiltro;
+
+                return matchSearch && matchFechaDesde && matchFechaHasta && matchEstado;
+            });
+
+            renderizarCirugias();
+        }
+
+        function limpiarFiltros() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('fechaDesde').value = '';
+            document.getElementById('fechaHasta').value = '';
+            document.getElementById('filtroEstado').value = '';
+            aplicarFiltros();
+        }
+
+        function actualizarEstadisticas() {
+            document.getElementById('totalCirugias').textContent = cirugiasData.length;
+
+            // Cirugías de este mes
+            const hoy = new Date();
+            const primerDiaMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1).toISOString().split('T')[0];
+            const cirugiasMes = cirugiasData.filter(c => c.fecha_cirugia >= primerDiaMes).length;
+            document.getElementById('cirugiasMes').textContent = cirugiasMes;
+
+            // Pacientes únicos
+            const pacientesUnicos = new Set(cirugiasData.map(c => c.nombre_paciente)).size;
+            document.getElementById('pacientesUnicos').textContent = pacientesUnicos;
+        }
+
+        function formatearFecha(fecha) {
+            if (!fecha) return '-';
+            const [year, month, day] = fecha.split('-');
+            return `${day}/${month}/${year}`;
+        }
+
+        function obtenerBadgeEstado(estado) {
+            const badges = {
+                'Exitosa': 'badge-success',
+                'Complicaciones': 'badge-danger',
+                'En Recuperación': 'badge-warning',
+                'Alta': 'badge-info'
+            };
+            const clase = badges[estado] || 'badge-info';
+            return `<span class="badge ${clase}">${estado || 'Sin estado'}</span>`;
+        }
+
+        function editarCirugia(id) {
+            window.location.href = `/form?id=${id}`;
+        }
+
+        async function eliminarCirugia(id, nombrePaciente) {
+            if (!confirm(`¿Estás seguro de eliminar la cirugía del paciente ${nombrePaciente}?`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/cirugia/${id}`, {
+                    method: 'DELETE'
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    alert('Cirugía eliminada exitosamente');
+                    cargarCirugias();
+                } else {
+                    alert('Error al eliminar: ' + result.error);
+                }
+            } catch (error) {
+                alert('Error de conexión: ' + error.message);
+            }
+        }
+
+        async function exportarExcel() {
+            try {
+                window.location.href = '/api/export';
+            } catch (error) {
+                alert('Error al exportar: ' + error.message);
+            }
+        }
+
+        function mostrarError(mensaje) {
+            document.getElementById('loadingState').innerHTML = `
+                <p style="color: #f56565;">❌ ${mensaje}</p>
+                <button class="btn btn-primary" onclick="location.reload()">Reintentar</button>
+            `;
+        }
+    </script>
+</body>
+</html>

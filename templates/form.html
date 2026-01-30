@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>G.Q.G - Formulario de Cirugía</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f2f5;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .back-link {
+            color: white;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 10px;
+            opacity: 0.9;
+        }
+
+        .back-link:hover {
+            opacity: 1;
+        }
+
+        .form-container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .form-section {
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .form-section:last-child {
+            border-bottom: none;
+        }
+
+        .form-section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .form-grid-full {
+            grid-column: 1 / -1;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #2d3748;
+            font-size: 0.95em;
+        }
+
+        .label-required::after {
+            content: " *";
+            color: #f56565;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="date"],
+        input[type="time"],
+        select,
+        textarea {
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border 0.3s;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #718096;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #4a5568;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            justify-content: flex-end;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert-success {
+            background: #c6f6d5;
+            color: #22543d;
+            border-left: 4px solid #48bb78;
+        }
+
+        .alert-error {
+            background: #fed7d7;
+            color: #742a2a;
+            border-left: 4px solid #f56565;
+        }
+
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loading-spinner {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .help-text {
+            font-size: 0.85em;
+            color: #718096;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🫀 G.Q.G - Registro de Cirugía Cardiovascular</h1>
+        <a href="/" class="back-link">← Volver al Dashboard</a>
+    </div>
+
+    <div class="form-container">
+        <div id="alertSuccess" class="alert alert-success">
+            ✓ Cirugía guardada exitosamente
+        </div>
+        <div id="alertError" class="alert alert-error">
+            ✗ <span id="errorMessage"></span>
+        </div>
+
+        <form id="cirugiaForm">
+            <!-- DATOS DEL PACIENTE -->
+            <div class="form-section">
+                <h2>👤 Datos del Paciente</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="label-required">Nombre Completo</label>
+                        <input type="text" name="nombre_paciente" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="label-required">Edad</label>
+                        <input type="number" name="edad" min="0" max="120" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="label-required">Sexo</label>
+                        <select name="sexo" required>
+                            <option value="">Seleccionar...</option>
+                            <option value="Masculino">Masculino</option>
+                            <option value="Femenino">Femenino</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Cédula/ID</label>
+                        <input type="text" name="cedula">
+                    </div>
+                    <div class="form-group">
+                        <label>Teléfono</label>
+                        <input type="text" name="telefono">
+                    </div>
+                    <div class="form-group">
+                        <label>Peso (kg)</label>
+                        <input type="number" name="peso" step="0.1">
+                    </div>
+                    <div class="form-group">
+                        <label>Altura (cm)</label>
+                        <input type="number" name="altura" step="0.1">
+                    </div>
+                    <div class="form-group">
+                        <label>Grupo Sanguíneo</label>
+                        <select name="grupo_sanguineo">
+                            <option value="">Seleccionar...</option>
+                            <option value="A+">A+</option>
+                            <option value="A-">A-</option>
+                            <option value="B+">B+</option>
+                            <option value="B-">B-</option>
+                            <option value="AB+">AB+</option>
+                            <option value="AB-">AB-</option>
+                            <option value="O+">O+</option>
+                            <option value="O-">O-</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ANTECEDENTES MÉDICOS -->
+            <div class="form-section">
+                <h2>📋 Antecedentes Médicos</h2>
+                <div class="form-grid">
+                    <div class="form-group form-grid-full">
+                        <label>Diagnóstico Principal</label>
+                        <textarea name="diagnostico" rows="3"></textarea>
+                    </div>
+                    
+                    <div class="form-group form-grid-full">
+                        <label>Comorbilidades</label>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-bottom: 10px;">
+                            <label style="display: flex; align-items: center; gap: 8px;">
+                                <input type="checkbox" name="comorbilidades[]" value="Hipertensión Arterial">
+                                <span>Hipertensión Arterial</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 8px;">
+                                <input type="checkbox" name="comorbilidades[]" value="Diabetes Mellitus">
+                                <span>Diabetes Mellitus</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 8px;">
+                                <input type="checkbox" name="comorbilidades[]" value="Enfermedad Renal Crónica">
+                                <span>Enfermedad Renal Crónica</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 8px;">
+                                <input type="checkbox" name="comorbilidades[]" value="EPOC">
+                                <span>EPOC</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 8px;">
+                                <input type="checkbox" name="comorbilidades[]" value="Dislipidemia">
+                                <span>Dislipidemia</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 8px;">
+                                <input type="checkbox" name="comorbilidades[]" value="Fibrilación Auricular">
+                                <span>Fibrilación Auricular</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 8px;">
+                                <input type="checkbox" name="comorbilidades[]" value="Obesidad">
+                                <span>Obesidad</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 8px;">
+                                <input type="checkbox" name="comorbilidades[]" value="Tabaquismo">
+                                <span>Tabaquismo</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 8px;">
+                                <input type="checkbox" name="comorbilidades[]" value="ACV Previo">
+                                <span>ACV Previo</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 8px;">
+                                <input type="checkbox" name="comorbilidades[]" value="Infarto Previo">
+                                <span>Infarto Previo</span>
+                            </label>
+                        </div>
+                        <textarea name="comorbilidades_adicionales" rows="2" placeholder="Comorbilidades adicionales..."></textarea>
+                    </div>
+                    
+                    <div class="form-group form-grid-full">
+                        <label>Medicamentos Previos</label>
+                        <textarea name="medicamentos_previos" rows="2"></textarea>
+                    </div>
+                    <div class="form-group form-grid-full">
+                        <label>Alergias</label>
+                        <textarea name="alergias" rows="2"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DATOS DE LA CIRUGÍA -->
+            <div class="form-section">
+                <h2>🔬 Datos de la Cirugía</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="label-required">Fecha de Cirugía</label>
+                        <input type="date" name="fecha_cirugia" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Hora de Inicio</label>
+                        <input type="time" name="hora_inicio">
+                    </div>
+                    <div class="form-group">
+                        <label>Hora de Fin</label>
+                        <input type="time" name="hora_fin">
+                    </div>
+                    <div class="form-group">
+                        <label>Duración (minutos)</label>
+                        <input type="number" name="duracion_minutos" min="0">
+                    </div>
+                    <div class="form-group form-grid-full">
+                        <label class="label-required">Procedimiento</label>
+                        <select name="procedimiento" required>
+                            <option value="">Seleccionar...</option>
+                            
+                            <!-- Cirugía Coronaria -->
+                            <optgroup label="Cirugía Coronaria">
+                                <option value="Revascularización Coronaria">Revascularización Coronaria (CABG)</option>
+                                <option value="CABG On-Pump">CABG On-Pump</option>
+                                <option value="CABG Off-Pump">CABG Off-Pump (Sin CEC)</option>
+                                <option value="CABG Mínimamente Invasivo">CABG Mínimamente Invasivo</option>
+                            </optgroup>
+                            
+                            <!-- Cirugía Valvular -->
+                            <optgroup label="Cirugía Valvular">
+                                <option value="Reemplazo Valvular Aórtico">Reemplazo Valvular Aórtico</option>
+                                <option value="TAVI">TAVI (Implante Aórtico Transcatéter)</option>
+                                <option value="Reparación Valvular Aórtica">Reparación Valvular Aórtica</option>
+                                <option value="Reemplazo Valvular Mitral">Reemplazo Valvular Mitral</option>
+                                <option value="Reparación Valvular Mitral">Reparación Valvular Mitral</option>
+                                <option value="Plastia Mitral">Plastia Mitral</option>
+                                <option value="Reemplazo Valvular Tricúspide">Reemplazo Valvular Tricúspide</option>
+                                <option value="Reparación Valvular Tricúspide">Reparación Valvular Tricúspide</option>
+                                <option value="Reemplazo Valvular Pulmonar">Reemplazo Valvular Pulmonar</option>
+                                <option value="Doble Reemplazo Valvular">Doble Reemplazo Valvular</option>
+                            </optgroup>
+                            
+                            <!-- Cirugía de Aorta -->
+                            <optgroup label="Cirugía de Aorta">
+                                <option value="Aneurisma Aórtico">Cirugía de Aneurisma Aórtico</option>
+                                <option value="Reemplazo Aorta Ascendente">Reemplazo de Aorta Ascendente</option>
+                                <option value="Cirugía Bentall">Cirugía de Bentall</option>
+                                <option value="Disección Aórtica">Reparación de Disección Aórtica</option>
+                                <option value="Reemplazo Arco Aórtico">Reemplazo de Arco Aórtico</option>
+                                <option value="TEVAR">TEVAR (Reparación Endovascular)</option>
+                            </optgroup>
+                            
+                            <!-- Cardiopatías Congénitas -->
+                            <optgroup label="Cardiopatías Congénitas">
+                                <option value="Corrección de CIA">Corrección de CIA (Comunicación Interauricular)</option>
+                                <option value="Corrección de CIV">Corrección de CIV (Comunicación Interventricular)</option>
+                                <option value="Corrección de Tetralogía de Fallot">Corrección de Tetralogía de Fallot</option>
+                                <option value="Corrección de Coartación Aórtica">Corrección de Coartación Aórtica</option>
+                                <option value="Operación de Glenn">Operación de Glenn</option>
+                                <option value="Operación de Fontan">Operación de Fontan</option>
+                                <option value="Corrección de TGA">Corrección de Transposición de Grandes Arterias</option>
+                            </optgroup>
+                            
+                            <!-- Dispositivos y Electrofisiología -->
+                            <optgroup label="Dispositivos y Electrofisiología">
+                                <option value="Marcapasos">Implante de Marcapasos</option>
+                                <option value="DAI">Implante de DAI (Desfibrilador Automático)</option>
+                                <option value="Resincronizador">Implante de Resincronizador Cardíaco</option>
+                                <option value="Ablación Cardíaca">Ablación Cardíaca</option>
+                                <option value="Procedimiento Maze">Procedimiento Maze</option>
+                            </optgroup>
+                            
+                            <!-- Otras Cirugías -->
+                            <optgroup label="Otras Cirugías Cardíacas">
+                                <option value="Pericardiectomía">Pericardiectomía</option>
+                                <option value="Resección Tumoral">Resección de Tumor Cardíaco</option>
+                                <option value="Trasplante Cardíaco">Trasplante Cardíaco</option>
+                                <option value="Asistencia Ventricular">Implante de Asistencia Ventricular</option>
+                                <option value="Reparación Aneurisma Ventricular">Reparación de Aneurisma Ventricular</option>
+                            </optgroup>
+                            
+                            <option value="Otro">Otro</option>
+                        </select>
+                    </div>
+                    <div class="form-group form-grid-full">
+                        <label>Procedimiento Adicional (si aplica)</label>
+                        <input type="text" name="procedimiento_adicional" placeholder="Especificar procedimiento adicional...">
+                    </div>
+                    <div class="form-group form-grid-full">
+                        <label>Descripción Quirúrgica</label>
+                        <textarea name="descripcion_quirurgica" rows="4"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="label-required">Cirujano Principal</label>
+                        <input type="text" name="cirujano_principal" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Primer Ayudante</label>
+                        <input type="text" name="primer_ayudante">
+                    </div>
+                    <div class="form-group">
+                        <label>Segundo Ayudante</label>
+                        <input type="text" name="segundo_ayudante">
+                    </div>
+                    <div class="form-group">
+                        <label>Anestesiólogo</label>
+                        <input type="text" name="anestesiologo">
+                    </div>
+                    <div class="form-group">
+                        <label>Perfusionista</label>
+                        <input type="text" name="perfusionista">
+                    </div>
+                </div>
+            </div>
+
+            <!-- DATOS CARDIOVASCULARES ESPECÍFICOS -->
+            <div class="form-section">
+                <h2>❤️ Datos Cardiovasculares</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>FEVI Preoperatoria (%)</label>
+                        <input type="number" name="fevi_preop" min="0" max="100" step="1">
+                        <span class="help-text">Fracción de Eyección del Ventrículo Izquierdo</span>
+                    </div>
+                    <div class="form-group">
+                        <label>Clase Funcional NYHA</label>
+                        <select name="nyha_preop">
+                            <option value="">Seleccionar...</option>
+                            <option value="Ninguno">Ninguno</option>
+                            <option value="I">I - Sin limitación</option>
+                            <option value="II">II - Limitación leve</option>
+                            <option value="III">III - Limitación moderada</option>
+                            <option value="IV">IV - Limitación severa</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Riesgo Euroscore II (%)</label>
+                        <input type="number" name="euroscore" step="0.1">
+                    </div>
+                    <div class="form-group">
+                        <label>Tiempo de Circulación Extracorpórea (min)</label>
+                        <input type="number" name="tiempo_cec" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Tiempo de Clampeo Aórtico (min)</label>
+                        <input type="number" name="tiempo_clampeo" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Número de Puentes</label>
+                        <input type="number" name="numero_puentes" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Tipo de Prótesis</label>
+                        <input type="text" name="tipo_protesis" placeholder="Ej: Prótesis mecánica, biológica, conducto valvulado...">
+                    </div>
+                    <div class="form-group">
+                        <label>Tipo de Injerto</label>
+                        <input type="text" name="tipo_injerto" placeholder="Ej: Mamaria interna, safena, radial...">
+                    </div>
+                </div>
+            </div>
+
+            <!-- DATOS POSTOPERATORIOS -->
+            <div class="form-section">
+                <h2>🏥 Postoperatorio</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Estado Postoperatorio</label>
+                        <select name="estado_postoperatorio">
+                            <option value="">Seleccionar...</option>
+                            <option value="Exitosa">Exitosa</option>
+                            <option value="Complicaciones">Complicaciones</option>
+                            <option value="En Recuperación">En Recuperación</option>
+                            <option value="Alta">Alta</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Días en UCI</label>
+                        <input type="number" name="dias_uci" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Días de Hospitalización</label>
+                        <input type="number" name="dias_hospitalizacion" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Horas de Ventilación Mecánica</label>
+                        <input type="number" name="horas_ventilacion" min="0" step="0.5">
+                    </div>
+                    <div class="form-group form-grid-full">
+                        <label>Complicaciones</label>
+                        <textarea name="complicaciones" rows="3" placeholder="Sangrado, arritmias, infección, etc."></textarea>
+                    </div>
+                    <div class="form-group form-grid-full">
+                        <label>Tratamiento Postoperatorio</label>
+                        <textarea name="tratamiento_postop" rows="3"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SEGUIMIENTO -->
+            <div class="form-section">
+                <h2>📊 Seguimiento y Notas</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Fecha de Alta</label>
+                        <input type="date" name="fecha_alta">
+                    </div>
+                    <div class="form-group">
+                        <label>Próxima Cita</label>
+                        <input type="date" name="proxima_cita">
+                    </div>
+                    <div class="form-group form-grid-full">
+                        <label>Notas Adicionales</label>
+                        <textarea name="notas" rows="4"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <a href="/" class="btn btn-secondary">Cancelar</a>
+                <button type="submit" class="btn btn-primary" id="submitBtn">💾 Guardar Cirugía</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+            <p>Guardando cirugía...</p>
+        </div>
+    </div>
+
+    <script>
+    // ============================================================================
+    // VARIABLES GLOBALES
+    // ============================================================================
+    let editMode = false;
+    let cirugiaId = null;
+    let isSubmitting = false; // Prevenir múltiples envíos
+
+    // ============================================================================
+    // INICIALIZACIÓN AL CARGAR LA PÁGINA
+    // ============================================================================
+    document.addEventListener('DOMContentLoaded', async () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        cirugiaId = urlParams.get('id');
+        
+        if (cirugiaId) {
+            editMode = true;
+            document.querySelector('.header h1').textContent = '🫀 G.Q.G - Editar Cirugía';
+            document.getElementById('submitBtn').innerHTML = '💾 Actualizar Cirugía';
+            await cargarDatosCirugia(cirugiaId);
+        }
+        
+        // Inicializar listeners de cálculo de duración
+        const horaInicio = document.querySelector('input[name="hora_inicio"]');
+        const horaFin = document.querySelector('input[name="hora_fin"]');
+        
+        if (horaInicio) horaInicio.addEventListener('change', calcularDuracion);
+        if (horaFin) horaFin.addEventListener('change', calcularDuracion);
+    });
+
+    // ============================================================================
+    // CARGAR DATOS PARA EDICIÓN
+    // ============================================================================
+    async function cargarDatosCirugia(id) {
+        try {
+            document.getElementById('loadingOverlay').style.display = 'flex';
+            
+            const response = await fetch(`/api/cirugia/${id}`);
+            const result = await response.json();
+            
+            if (result.success && result.data) {
+                const data = result.data;
+                
+                // Llenar campos normales del formulario
+                for (let key in data) {
+                    if (key === 'id' || key === 'comorbilidades') continue;
+                    
+                    const input = document.querySelector(`[name="${key}"]`);
+                    if (input) {
+                        if (input.type === 'checkbox' && key !== 'comorbilidades[]') {
+                            input.checked = data[key];
+                        } else {
+                            input.value = data[key] || '';
+                        }
+                    }
+                }
+                
+                // Marcar checkboxes de comorbilidades
+                if (data.comorbilidades && Array.isArray(data.comorbilidades)) {
+                    data.comorbilidades.forEach(comorbilidad => {
+                        const checkbox = document.querySelector(`input[name="comorbilidades[]"][value="${comorbilidad}"]`);
+                        if (checkbox) {
+                            checkbox.checked = true;
+                        }
+                    });
+                }
+            } else {
+                mostrarError('Error al cargar la cirugía: ' + (result.error || 'Error desconocido'));
+            }
+        } catch (error) {
+            console.error('Error al cargar datos:', error);
+            mostrarError('Error de conexión: ' + error.message);
+        } finally {
+            document.getElementById('loadingOverlay').style.display = 'none';
+        }
+    }
+
+    // ============================================================================
+    // MANEJO DEL ENVÍO DEL FORMULARIO (UN SOLO LISTENER)
+    // ============================================================================
+    document.getElementById('cirugiaForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        // Prevenir envíos múltiples
+        if (isSubmitting) {
+            console.log('Ya hay un envío en progreso...');
+            return;
+        }
+        
+        isSubmitting = true;
+        
+        // Deshabilitar botón
+        const submitBtn = document.getElementById('submitBtn');
+        const originalBtnText = submitBtn.innerHTML;
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '⏳ Guardando...';
+        
+        // Mostrar loading
+        document.getElementById('loadingOverlay').style.display = 'flex';
+        
+        try {
+            // Recopilar datos del formulario
+            const formData = new FormData(this);
+            const data = {};
+            
+            // Procesar todos los campos normales
+            for (let [key, value] of formData.entries()) {
+                if (key !== 'comorbilidades[]') {
+                    data[key] = value;
+                }
+            }
+            
+            // Procesar checkboxes de comorbilidades
+            const comorbilidades = [];
+            const checkboxes = document.querySelectorAll('input[name="comorbilidades[]"]:checked');
+            checkboxes.forEach(checkbox => {
+                comorbilidades.push(checkbox.value);
+            });
+            data['comorbilidades'] = comorbilidades;
+            
+            // Determinar URL y método según el modo
+            const url = editMode ? `/api/cirugia/${cirugiaId}` : '/api/cirugia';
+            const method = editMode ? 'PUT' : 'POST';
+            
+            console.log('Enviando a:', url, 'Método:', method); // Debug
+            
+            // Enviar datos al servidor
+            const response = await fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                mostrarExito();
+                
+                // Redirigir después de 1.5 segundos
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 1500);
+            } else {
+                mostrarError(result.error || 'Error desconocido');
+                // Rehabilitar botón en caso de error
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnText;
+                isSubmitting = false;
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            mostrarError('Error de conexión: ' + error.message);
+            
+            // Rehabilitar botón en caso de error
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalBtnText;
+            isSubmitting = false;
+        } finally {
+            document.getElementById('loadingOverlay').style.display = 'none';
+        }
+    });
+
+    // ============================================================================
+    // FUNCIONES DE MENSAJES
+    // ============================================================================
+    function mostrarExito() {
+        const alert = document.getElementById('alertSuccess');
+        alert.style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        
+        setTimeout(() => {
+            alert.style.display = 'none';
+        }, 3000);
+    }
+
+    function mostrarError(mensaje) {
+        const alert = document.getElementById('alertError');
+        document.getElementById('errorMessage').textContent = mensaje;
+        alert.style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        
+        setTimeout(() => {
+            alert.style.display = 'none';
+        }, 5000);
+    }
+
+    // ============================================================================
+    // CALCULAR DURACIÓN AUTOMÁTICAMENTE
+    // ============================================================================
+    function calcularDuracion() {
+        const horaInicio = document.querySelector('input[name="hora_inicio"]');
+        const horaFin = document.querySelector('input[name="hora_fin"]');
+        const duracion = document.querySelector('input[name="duracion_minutos"]');
+        
+        if (horaInicio && horaFin && horaInicio.value && horaFin.value) {
+            const [h1, m1] = horaInicio.value.split(':').map(Number);
+            const [h2, m2] = horaFin.value.split(':').map(Number);
+            
+            let minutos = (h2 * 60 + m2) - (h1 * 60 + m1);
+            
+            // Si es negativo, asumimos que cruzó la medianoche
+            if (minutos < 0) {
+                minutos += 24 * 60;
+            }
+            
+            if (minutos > 0 && duracion) {
+                duracion.value = minutos;
+            }
+        }
+    }
+    </script>
+</body>
+</html>
