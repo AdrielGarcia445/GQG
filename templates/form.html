@@ -13,23 +13,43 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f0f2f5;
+            background: #f5f5f5;
             padding: 15px;
         }
 
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
             color: white;
             padding: 20px;
-            border-radius: 10px;
+            border-radius: 12px;
             margin-bottom: 20px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 8px 20px rgba(220, 38, 38, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
         }
 
         .header h1 {
             font-size: 1.5em;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             line-height: 1.3;
+            font-weight: 700;
+            letter-spacing: -0.5px;
         }
 
         .back-link {
@@ -37,42 +57,68 @@
             text-decoration: none;
             display: inline-flex;
             align-items: center;
-            gap: 5px;
-            margin-top: 10px;
-            opacity: 0.9;
-            font-size: 0.95em;
+            gap: 8px;
+            margin-top: 8px;
+            opacity: 0.95;
+            font-size: 0.9em;
+            font-weight: 500;
+            transition: all 0.3s;
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
         }
 
         .back-link:hover {
             opacity: 1;
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateX(-3px);
         }
 
         .form-container {
             background: white;
             padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
             max-width: 1200px;
             margin: 0 auto;
+            border: 1px solid #e5e5e5;
         }
 
         .form-section {
-            margin-bottom: 30px;
-            padding-bottom: 25px;
-            border-bottom: 2px solid #e0e0e0;
+            margin-bottom: 35px;
+            padding-bottom: 30px;
+            border-bottom: 2px solid #f0f0f0;
+            position: relative;
+        }
+
+        .form-section::before {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 80px;
+            height: 2px;
+            background: linear-gradient(90deg, #dc2626 0%, transparent 100%);
         }
 
         .form-section:last-child {
             border-bottom: none;
         }
 
+        .form-section:last-child::before {
+            display: none;
+        }
+
         .form-section h2 {
-            color: #667eea;
+            color: #dc2626;
             margin-bottom: 20px;
             font-size: 1.3em;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
         }
 
         .form-grid {
@@ -93,13 +139,16 @@
         label {
             font-weight: 600;
             margin-bottom: 8px;
-            color: #2d3748;
-            font-size: 0.95em;
+            color: #1a1a1a;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
         }
 
         .label-required::after {
             content: " *";
-            color: #f56565;
+            color: #dc2626;
+            font-weight: 700;
         }
 
         input[type="text"],
@@ -108,94 +157,148 @@
         input[type="time"],
         select,
         textarea {
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 6px;
+            padding: 12px 15px;
+            border: 2px solid #e5e5e5;
+            border-radius: 8px;
             font-size: 16px;
             font-family: inherit;
-            transition: border 0.3s;
+            transition: all 0.3s;
             -webkit-appearance: none;
             appearance: none;
+            background: #fafafa;
+            color: #1a1a1a;
         }
 
         select {
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23dc2626' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
-            background-position: right 12px center;
-            padding-right: 35px;
+            background-position: right 15px center;
+            padding-right: 40px;
         }
 
         input:focus,
         select:focus,
         textarea:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #dc2626;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.1);
         }
 
         textarea {
             resize: vertical;
             min-height: 100px;
+            line-height: 1.5;
         }
 
         .btn {
-            padding: 14px 24px;
+            padding: 14px 28px;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             font-size: 16px;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.3s;
             text-decoration: none;
             display: inline-block;
             text-align: center;
             width: 100%;
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn span {
+            position: relative;
+            z-index: 1;
         }
 
         .btn-primary {
-            background: #667eea;
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
             color: white;
+            box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
         }
 
-        .btn-primary:hover {
-            background: #5568d3;
+        .btn-primary:hover:not(:disabled) {
             transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 8px 25px rgba(220, 38, 38, 0.4);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
         }
 
         .btn-secondary {
-            background: #718096;
+            background: linear-gradient(135deg, #525252 0%, #262626 100%);
             color: white;
+            box-shadow: 0 4px 15px rgba(82, 82, 82, 0.25);
         }
 
         .btn-secondary:hover {
-            background: #4a5568;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(82, 82, 82, 0.35);
         }
 
         .form-actions {
             display: flex;
             flex-direction: column;
             gap: 12px;
-            margin-top: 25px;
+            margin-top: 30px;
         }
 
         .alert {
-            padding: 15px 18px;
-            border-radius: 6px;
+            padding: 16px 20px;
+            border-radius: 10px;
             margin-bottom: 20px;
             display: none;
             font-size: 0.95em;
+            font-weight: 500;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .alert-success {
-            background: #c6f6d5;
-            color: #22543d;
-            border-left: 4px solid #48bb78;
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            color: #065f46;
+            border-left: 4px solid #059669;
+            border: 1px solid #6ee7b7;
         }
 
         .alert-error {
-            background: #fed7d7;
-            color: #742a2a;
-            border-left: 4px solid #f56565;
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            color: #991b1b;
+            border-left: 4px solid #dc2626;
+            border: 1px solid #fca5a5;
         }
 
         .loading-overlay {
@@ -205,28 +308,30 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0,0,0,0.6);
             z-index: 9999;
             justify-content: center;
             align-items: center;
+            backdrop-filter: blur(4px);
         }
 
         .loading-spinner {
             background: white;
-            padding: 30px;
-            border-radius: 10px;
+            padding: 40px;
+            border-radius: 12px;
             text-align: center;
             margin: 0 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
         }
 
         .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
+            border: 4px solid #fee2e2;
+            border-top: 4px solid #dc2626;
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
+            width: 50px;
+            height: 50px;
             animation: spin 1s linear infinite;
-            margin: 0 auto 15px;
+            margin: 0 auto 20px;
         }
 
         @keyframes spin {
@@ -234,39 +339,58 @@
             100% { transform: rotate(360deg); }
         }
 
+        .loading-spinner p {
+            color: #262626;
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
         .help-text {
-            font-size: 0.85em;
-            color: #718096;
-            margin-top: 5px;
+            font-size: 0.8em;
+            color: #737373;
+            margin-top: 6px;
+            font-weight: 400;
+            text-transform: none;
+            letter-spacing: normal;
         }
 
         .checkbox-grid {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 12px;
+            gap: 10px;
             margin-bottom: 12px;
         }
 
         .checkbox-grid label {
             display: flex;
             align-items: center;
-            gap: 10px;
-            font-weight: 400;
-            padding: 10px;
-            background: #f7fafc;
-            border-radius: 6px;
+            gap: 12px;
+            font-weight: 500;
+            padding: 12px 14px;
+            background: #fafafa;
+            border-radius: 8px;
             cursor: pointer;
-            transition: background 0.2s;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+            text-transform: none;
+            letter-spacing: normal;
         }
 
         .checkbox-grid label:hover {
-            background: #edf2f7;
+            background: #f0f0f0;
+            border-color: #e5e5e5;
+        }
+
+        .checkbox-grid input[type="checkbox"]:checked + span {
+            color: #dc2626;
+            font-weight: 600;
         }
 
         .checkbox-grid input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
+            width: 22px;
+            height: 22px;
             cursor: pointer;
+            accent-color: #dc2626;
         }
 
         /* Tablet styles */
@@ -298,7 +422,7 @@
 
             .btn {
                 width: auto;
-                min-width: 180px;
+                min-width: 200px;
             }
 
             .form-actions {
@@ -310,7 +434,9 @@
         /* Desktop styles */
         @media (min-width: 1024px) {
             body {
-                padding: 20px;
+                padding: 25px;
+                max-width: 1400px;
+                margin: 0 auto;
             }
 
             .header {
@@ -326,13 +452,13 @@
             }
 
             .form-section {
-                margin-bottom: 40px;
-                padding-bottom: 30px;
+                margin-bottom: 45px;
+                padding-bottom: 35px;
             }
 
             .form-section h2 {
                 font-size: 1.5em;
-                gap: 10px;
+                gap: 12px;
             }
 
             .form-grid {
@@ -340,13 +466,13 @@
             }
 
             .checkbox-grid {
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                gap: 10px;
+                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+                gap: 12px;
             }
 
             .checkbox-grid label {
-                padding: 8px;
-                gap: 8px;
+                padding: 10px 12px;
+                gap: 10px;
             }
 
             input[type="text"],
@@ -359,13 +485,12 @@
             }
 
             .btn {
-                font-size: 16px;
+                font-size: 15px;
             }
         }
 
         /* Mejoras para accesibilidad en móvil */
         @media (max-width: 599px) {
-            /* Asegurar que los inputs sean lo suficientemente grandes para tocar */
             input[type="text"],
             input[type="number"],
             input[type="date"],
@@ -375,12 +500,10 @@
                 min-height: 48px;
             }
 
-            /* Mejorar espaciado en secciones */
             .form-section h2 {
                 font-size: 1.2em;
             }
 
-            /* Hacer los checkboxes más fáciles de tocar */
             .checkbox-grid label {
                 min-height: 48px;
             }
@@ -390,7 +513,6 @@
                 height: 24px;
             }
 
-            /* Scroll suave */
             html {
                 scroll-behavior: smooth;
             }
@@ -420,7 +542,7 @@
             }
 
             .form-section {
-                margin-bottom: 20px;
+                margin-bottom: 25px;
                 padding-bottom: 20px;
             }
 
@@ -432,8 +554,10 @@
 </head>
 <body>
     <div class="header">
-        <h1>🫀 G.Q.G - Registro de Cirugía Cardiovascular</h1>
-        <a href="/" class="back-link">← Volver al Dashboard</a>
+        <div class="header-content">
+            <h1>🫀 G.Q.G - Registro de Cirugía Cardiovascular</h1>
+            <a href="/" class="back-link">← Volver al Dashboard</a>
+        </div>
     </div>
 
     <div class="form-container">
@@ -590,7 +714,6 @@
                         <select name="procedimiento" required>
                             <option value="">Seleccionar...</option>
                             
-                            <!-- Cirugía Coronaria -->
                             <optgroup label="Cirugía Coronaria">
                                 <option value="Revascularización Coronaria">Revascularización Coronaria (CABG)</option>
                                 <option value="CABG On-Pump">CABG On-Pump</option>
@@ -598,7 +721,6 @@
                                 <option value="CABG Mínimamente Invasivo">CABG Mínimamente Invasivo</option>
                             </optgroup>
                             
-                            <!-- Cirugía Valvular -->
                             <optgroup label="Cirugía Valvular">
                                 <option value="Reemplazo Valvular Aórtico">Reemplazo Valvular Aórtico</option>
                                 <option value="TAVI">TAVI (Implante Aórtico Transcatéter)</option>
@@ -612,7 +734,6 @@
                                 <option value="Doble Reemplazo Valvular">Doble Reemplazo Valvular</option>
                             </optgroup>
                             
-                            <!-- Cirugía de Aorta -->
                             <optgroup label="Cirugía de Aorta">
                                 <option value="Aneurisma Aórtico">Cirugía de Aneurisma Aórtico</option>
                                 <option value="Reemplazo Aorta Ascendente">Reemplazo de Aorta Ascendente</option>
@@ -622,7 +743,6 @@
                                 <option value="TEVAR">TEVAR (Reparación Endovascular)</option>
                             </optgroup>
                             
-                            <!-- Cardiopatías Congénitas -->
                             <optgroup label="Cardiopatías Congénitas">
                                 <option value="Corrección de CIA">Corrección de CIA (Comunicación Interauricular)</option>
                                 <option value="Corrección de CIV">Corrección de CIV (Comunicación Interventricular)</option>
@@ -633,7 +753,6 @@
                                 <option value="Corrección de TGA">Corrección de Transposición de Grandes Arterias</option>
                             </optgroup>
                             
-                            <!-- Dispositivos y Electrofisiología -->
                             <optgroup label="Dispositivos y Electrofisiología">
                                 <option value="Marcapasos">Implante de Marcapasos</option>
                                 <option value="DAI">Implante de DAI (Desfibrilador Automático)</option>
@@ -642,7 +761,6 @@
                                 <option value="Procedimiento Maze">Procedimiento Maze</option>
                             </optgroup>
                             
-                            <!-- Otras Cirugías -->
                             <optgroup label="Otras Cirugías Cardíacas">
                                 <option value="Pericardiectomía">Pericardiectomía</option>
                                 <option value="Resección Tumoral">Resección de Tumor Cardíaco</option>
@@ -803,16 +921,10 @@
     </div>
 
     <script>
-    // ============================================================================
-    // VARIABLES GLOBALES
-    // ============================================================================
     let editMode = false;
     let cirugiaId = null;
-    let isSubmitting = false; // Prevenir múltiples envíos
+    let isSubmitting = false;
 
-    // ============================================================================
-    // INICIALIZACIÓN AL CARGAR LA PÁGINA
-    // ============================================================================
     document.addEventListener('DOMContentLoaded', async () => {
         const urlParams = new URLSearchParams(window.location.search);
         cirugiaId = urlParams.get('id');
@@ -824,7 +936,6 @@
             await cargarDatosCirugia(cirugiaId);
         }
         
-        // Inicializar listeners de cálculo de duración
         const horaInicio = document.querySelector('input[name="hora_inicio"]');
         const horaFin = document.querySelector('input[name="hora_fin"]');
         
@@ -832,9 +943,6 @@
         if (horaFin) horaFin.addEventListener('change', calcularDuracion);
     });
 
-    // ============================================================================
-    // CARGAR DATOS PARA EDICIÓN
-    // ============================================================================
     async function cargarDatosCirugia(id) {
         try {
             document.getElementById('loadingOverlay').style.display = 'flex';
@@ -845,7 +953,6 @@
             if (result.success && result.data) {
                 const data = result.data;
                 
-                // Llenar campos normales del formulario
                 for (let key in data) {
                     if (key === 'id' || key === 'comorbilidades') continue;
                     
@@ -859,7 +966,6 @@
                     }
                 }
                 
-                // Marcar checkboxes de comorbilidades
                 if (data.comorbilidades && Array.isArray(data.comorbilidades)) {
                     data.comorbilidades.forEach(comorbilidad => {
                         const checkbox = document.querySelector(`input[name="comorbilidades[]"][value="${comorbilidad}"]`);
@@ -879,14 +985,10 @@
         }
     }
 
-    // ============================================================================
-    // MANEJO DEL ENVÍO DEL FORMULARIO (UN SOLO LISTENER)
-    // ============================================================================
     document.getElementById('cirugiaForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         e.stopPropagation();
         
-        // Prevenir envíos múltiples
         if (isSubmitting) {
             console.log('Ya hay un envío en progreso...');
             return;
@@ -894,28 +996,23 @@
         
         isSubmitting = true;
         
-        // Deshabilitar botón
         const submitBtn = document.getElementById('submitBtn');
         const originalBtnText = submitBtn.innerHTML;
         submitBtn.disabled = true;
         submitBtn.innerHTML = '⏳ Guardando...';
         
-        // Mostrar loading
         document.getElementById('loadingOverlay').style.display = 'flex';
         
         try {
-            // Recopilar datos del formulario
             const formData = new FormData(this);
             const data = {};
             
-            // Procesar todos los campos normales
             for (let [key, value] of formData.entries()) {
                 if (key !== 'comorbilidades[]') {
                     data[key] = value;
                 }
             }
             
-            // Procesar checkboxes de comorbilidades
             const comorbilidades = [];
             const checkboxes = document.querySelectorAll('input[name="comorbilidades[]"]:checked');
             checkboxes.forEach(checkbox => {
@@ -923,13 +1020,11 @@
             });
             data['comorbilidades'] = comorbilidades;
             
-            // Determinar URL y método según el modo
             const url = editMode ? `/api/cirugia/${cirugiaId}` : '/api/cirugia';
             const method = editMode ? 'PUT' : 'POST';
             
-            console.log('Enviando a:', url, 'Método:', method); // Debug
+            console.log('Enviando a:', url, 'Método:', method);
             
-            // Enviar datos al servidor
             const response = await fetch(url, {
                 method: method,
                 headers: {
@@ -943,13 +1038,11 @@
             if (result.success) {
                 mostrarExito();
                 
-                // Redirigir después de 1.5 segundos
                 setTimeout(() => {
                     window.location.href = '/';
                 }, 1500);
             } else {
                 mostrarError(result.error || 'Error desconocido');
-                // Rehabilitar botón en caso de error
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = originalBtnText;
                 isSubmitting = false;
@@ -958,7 +1051,6 @@
             console.error('Error:', error);
             mostrarError('Error de conexión: ' + error.message);
             
-            // Rehabilitar botón en caso de error
             submitBtn.disabled = false;
             submitBtn.innerHTML = originalBtnText;
             isSubmitting = false;
@@ -967,9 +1059,6 @@
         }
     });
 
-    // ============================================================================
-    // FUNCIONES DE MENSAJES
-    // ============================================================================
     function mostrarExito() {
         const alert = document.getElementById('alertSuccess');
         alert.style.display = 'block';
@@ -991,9 +1080,6 @@
         }, 5000);
     }
 
-    // ============================================================================
-    // CALCULAR DURACIÓN AUTOMÁTICAMENTE
-    // ============================================================================
     function calcularDuracion() {
         const horaInicio = document.querySelector('input[name="hora_inicio"]');
         const horaFin = document.querySelector('input[name="hora_fin"]');
@@ -1005,7 +1091,6 @@
             
             let minutos = (h2 * 60 + m2) - (h1 * 60 + m1);
             
-            // Si es negativo, asumimos que cruzó la medianoche
             if (minutos < 0) {
                 minutos += 24 * 60;
             }
