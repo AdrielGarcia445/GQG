@@ -25,15 +25,18 @@ venv/
 env/
 ENV/
 .venv
+gqg-venv/
 
 # Secrets & Config
 .env
 .env.local
 .env.*.local
+firebase-credentials.json
 firebase-key.json
 *.pem
 *.key
 credentials.json
+*.json.backup
 
 # IDE
 .vscode/
@@ -63,3 +66,11 @@ htmlcov/
 
 # Render
 .render/
+.env
+
+# Exported files
+*.xlsx
+cirugias_*.xlsx
+
+.env.example
+

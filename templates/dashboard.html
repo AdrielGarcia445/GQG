@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>G.Q.G - Dashboard</title>
     <link rel="shortcut icon" href="../static/gqg ICN.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -51,7 +52,6 @@
         .header-logo {
             width: 50px;
             height: 50px;
-            background: rgba(255, 255, 255, 0.2);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -658,18 +658,7 @@
     <div class="header">
         <div class="header-content">
             <div class="header-logo">
-                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M50 85 C30 70, 15 55, 15 40 C15 25, 25 15, 35 15 C42 15, 47 20, 50 25 C53 20, 58 15, 65 15 C75 15, 85 25, 85 40 C85 55, 70 70, 50 85 Z" 
-                          fill="white" 
-                          opacity="0.95"/>
-                    <path d="M20 50 L30 50 L35 35 L40 65 L45 45 L50 50 L80 50" 
-                          stroke="white" 
-                          stroke-width="2.5" 
-                          fill="none" 
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          opacity="0.9"/>
-                </svg>
+                <img src="../static/GQG logo2.png" height="40px" alt="">
             </div>
             <div class="header-text">
                 <h1>G.Q.G</h1>
@@ -696,10 +685,10 @@
     <div class="controls">
         <div class="controls-row" style="margin-bottom: 15px;">
             <div class="search-box">
-                <input type="text" id="searchInput" placeholder="🔍 Buscar por paciente, procedimiento, cirujano...">
+                <input type="text" id="searchInput" placeholder="Buscar por paciente, procedimiento, cirujano...">
             </div>
-            <a href="/form" class="btn btn-primary"><span>➕ Nueva Cirugía</span></a>
-            <button class="btn btn-success" onclick="exportarExcel()"><span>📊 Exportar Excel</span></button>
+            <a href="/form" class="btn btn-primary"><span><i class="fas fa-plus"></i> Nueva Cirugía</span></a>
+            <button class="btn btn-success" onclick="exportarExcel()"><span><i class="fas fa-chart-bar"></i> Exportar Excel</span></button>
         </div>
         
         <div class="controls-row">
@@ -720,7 +709,7 @@
                     <option value="En Recuperación">En Recuperación</option>
                 </select>
             </div>
-            <button class="btn btn-secondary" onclick="limpiarFiltros()"><span>🔄 Limpiar</span></button>
+            <button class="btn btn-secondary" onclick="limpiarFiltros()"><span><i class="fas fa-sync-alt"></i> Limpiar</span></button>
         </div>
     </div>
 
@@ -738,7 +727,7 @@
             </div>
             <h2>No hay cirugías registradas</h2>
             <p>Comienza agregando tu primera cirugía cardiovascular</p>
-            <a href="/form" class="btn btn-primary"><span>➕ Registrar Primera Cirugía</span></a>
+            <a href="/form" class="btn btn-primary"><span><i class="fas fa-plus"></i> Primera Cirugía</span></a>
         </div>
 
         <table id="cirugiasTable" style="display: none;">

@@ -1,38 +1,69 @@
 import io
+import json
+import os
 from datetime import datetime
 from functools import wraps
 
 import firebase_admin
 import pandas as pd
+from dotenv import load_dotenv
 from firebase_admin import credentials, firestore
 from flask import (Flask, jsonify, redirect, render_template, request,
                    send_file, session, url_for)
+from werkzeug.security import check_password_hash, generate_password_hash
+
+# Cargar variables de entorno desde .env
+load_dotenv()
 
 app = Flask(__name__)
 
 # ============================================================================
 # CONFIGURACIÓN DE SEGURIDAD
 # ============================================================================
-# IMPORTANTE: Cambia esta clave secreta por una única y segura
-app.secret_key = 'tu-clave-secreta-super-segura-cambiame-12345'
+# Cargar desde variables de entorno
+app.secret_key = os.getenv('FLASK_SECRET_KEY', 'default-secret-key-change-in-production')
 
-# Contraseña del sistema (cámbiala por la que prefieras)
-SISTEMA_PASSWORD = 'adrielSofi04'
+# Contraseña del sistema
+SISTEMA_PASSWORD = os.getenv('SISTEMA_PASSWORD')
 
 # ============================================================================
 # INICIALIZACIÓN DE FIREBASE
 # ============================================================================
-# IMPORTANTE: Descarga tu archivo JSON de credenciales desde Firebase Console:
-# 1. Ve a Project Settings > Service Accounts
-# 2. Haz clic en "Generate New Private Key"
-# 3. Guarda el archivo como 'firebase-credentials.json' en la raíz del proyecto
+# Cargar credenciales desde variable de entorno (JSON string)
+firebase_credentials_json = os.getenv('FIREBASE_CREDENTIALS_JSON')
+if not firebase_credentials_json:
+    raise ValueError(
+        "Error: FIREBASE_CREDENTIALS_JSON no está configurada en el archivo .env. "
+        "Asegúrate de que contiene las credenciales de Firebase en formato JSON."
+    )
 
-cred = credentials.Certificate('firebase-credentials.json')
-firebase_admin.initialize_app(cred)
-db = firestore.client()
+try:
+    firebase_credentials_dict = json.loads(firebase_credentials_json)
+    cred = credentials.Certificate(firebase_credentials_dict)
+    firebase_admin.initialize_app(cred)
+    db = firestore.client()
+except json.JSONDecodeError as e:
+    raise ValueError(f"Error al parsear FIREBASE_CREDENTIALS_JSON: {str(e)}") from e
+except Exception as e:
+    raise ValueError(f"Error al inicializar Firebase: {str(e)}") from e
 
-# Nombre de la colección principal en Firestore
-COLLECTION_NAME = 'cirugias_cardiovasculares'
+# Nombre de las colecciones en Firestore (desde variables de entorno)
+COLLECTION_NAME = os.getenv('FIREBASE_COLLECTION_NAME', 'cirugias_cardiovasculares')
+USERS_COLLECTION = os.getenv('FIREBASE_USERS_COLLECTION', 'usuarios')
+
+# ============================================================================
+# FUNCIÓN AUXILIAR PARA OBTENER LA COLECCIÓN CORRECTA
+# ============================================================================
+
+def get_cirugias_collection():
+    """Retorna la colección correcta según si es admin o usuario"""
+    if session.get('is_admin'):
+        return db.collection(COLLECTION_NAME)
+    user_id = session.get('user_id')
+    if not user_id:
+        raise ValueError("Usuario no autenticado")
+    return db.collection(user_id)
+
 # ============================================================================
 # DECORADOR DE AUTENTICACIÓN
 # ============================================================================
@@ -117,17 +148,96 @@ def procesar_datos_formulario(data):
 # RUTAS DE AUTENTICACIÓN
 # ============================================================================
 
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    """Registro de nuevos usuarios"""
+    if request.method == 'POST':
+        email = request.form.get('email', '').strip().lower()
+        password = request.form.get('password', '')
+        
+        # Validar datos
+        if not email or not password:
+            return render_template('register.html', error='Email y contraseña son requeridos')
+        
+        # Verificar si el email ya existe
+        try:
+            existing = list(db.collection(USERS_COLLECTION)
+                          .where('email', '==', email).limit(1).stream())
+            if existing:
+                return render_template('register.html', error='El email ya está registrado')
+        except Exception as e:
+            return render_template('register.html', error=f'Error al verificar email: {str(e)}')
+        
+        try:
+            # Crear documento de usuario
+            hashed_password = generate_password_hash(password)
+            user_ref = db.collection(USERS_COLLECTION).document()
+            user_ref.set({
+                'email': email,
+                'password': hashed_password,
+                'fecha_registro': datetime.now().isoformat()
+            })
+            
+            # Iniciar sesión automáticamente
+            session['authenticated'] = True
+            session['is_admin'] = False
+            session['user_id'] = user_ref.id
+            session['email'] = email
+            
+            return redirect(url_for('dashboard'))
+        except Exception as e:
+            return render_template('register.html', error=f'Error al registrar: {str(e)}')
+    
+    # Si ya está autenticado, redirigir al dashboard
+    if session.get('authenticated'):
+        return redirect(url_for('dashboard'))
+    
+    return render_template('register.html')
+
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     """Página de login"""
     if request.method == 'POST':
-        password = request.form.get('password')
+        email = request.form.get('email', '').strip().lower()
+        password = request.form.get('password', '')
         
+        # Verificar si es admin
         if password == SISTEMA_PASSWORD:
             session['authenticated'] = True
+            session['is_admin'] = True
+            session['user_id'] = None
+            session['email'] = 'admin'
             return redirect(url_for('dashboard'))
-        else:
-            return render_template('login.html', error='Contraseña incorrecta')
+        
+        # Validar datos
+        if not email or not password:
+            return render_template('login.html', error='Email y contraseña son requeridos')
+        
+        try:
+            # Buscar usuario por email
+            snapshot = list(db.collection(USERS_COLLECTION)
+                          .where('email', '==', email).limit(1).stream())
+            
+            if not snapshot:
+                return render_template('login.html', error='Usuario o contraseña incorrectos')
+            
+            user_doc = snapshot[0]
+            user_data = user_doc.to_dict()
+            
+            # Verificar contraseña
+            if not check_password_hash(user_data.get('password', ''), password):
+                return render_template('login.html', error='Usuario o contraseña incorrectos')
+            
+            # Iniciar sesión
+            session['authenticated'] = True
+            session['is_admin'] = False
+            session['user_id'] = user_doc.id
+            session['email'] = email
+            
+            return redirect(url_for('dashboard'))
+        except Exception as e:
+            return render_template('login.html', error=f'Error al iniciar sesión: {str(e)}')
     
     # Si ya está autenticado, redirigir al dashboard
     if session.get('authenticated'):
@@ -140,6 +250,9 @@ def login():
 def logout():
     """Cerrar sesión"""
     session.pop('authenticated', None)
+    session.pop('is_admin', None)
+    session.pop('user_id', None)
+    session.pop('email', None)
     return redirect(url_for('login'))
 
 
@@ -170,7 +283,7 @@ def form():
 def get_cirugias():
     """Obtener todas las cirugías"""
     try:
-        cirugias_ref = db.collection(COLLECTION_NAME)
+        cirugias_ref = get_cirugias_collection()
         docs = cirugias_ref.stream()
         
         cirugias = []
@@ -192,7 +305,7 @@ def get_cirugias():
 def get_cirugia(cirugia_id):
     """Obtener una cirugía específica por ID"""
     try:
-        doc_ref = db.collection(COLLECTION_NAME).document(cirugia_id)
+        doc_ref = get_cirugias_collection().document(cirugia_id)
         doc = doc_ref.get()
         
         if doc.exists:
@@ -217,9 +330,11 @@ def create_cirugia():
         
         # Agregar metadata
         data['fecha_registro'] = datetime.now().isoformat()
+        if not session.get('is_admin'):
+            data['usuario_id'] = session['user_id']
         
         # Guardar en Firestore
-        doc_ref = db.collection(COLLECTION_NAME).document()
+        doc_ref = get_cirugias_collection().document()
         doc_ref.set(data)
         
         return jsonify({
@@ -246,7 +361,7 @@ def update_cirugia(cirugia_id):
         data['fecha_actualizacion'] = datetime.now().isoformat()
         
         # Actualizar en Firestore
-        doc_ref = db.collection(COLLECTION_NAME).document(cirugia_id)
+        doc_ref = get_cirugias_collection().document(cirugia_id)
         
         # Verificar que el documento existe
         if not doc_ref.get().exists:
@@ -268,7 +383,7 @@ def update_cirugia(cirugia_id):
 def delete_cirugia(cirugia_id):
     """Eliminar cirugía"""
     try:
-        doc_ref = db.collection(COLLECTION_NAME).document(cirugia_id)
+        doc_ref = get_cirugias_collection().document(cirugia_id)
         
         # Verificar que el documento existe antes de eliminar
         if not doc_ref.get().exists:
@@ -291,7 +406,7 @@ def delete_cirugia(cirugia_id):
 def export_excel():
     """Exportar datos a Excel"""
     try:
-        cirugias_ref = db.collection(COLLECTION_NAME)
+        cirugias_ref = get_cirugias_collection()
         docs = cirugias_ref.stream()
         
         cirugias = []
@@ -362,7 +477,7 @@ def export_excel():
 def get_estadisticas():
     """Obtener estadísticas generales del sistema"""
     try:
-        cirugias_ref = db.collection(COLLECTION_NAME)
+        cirugias_ref = get_cirugias_collection()
         docs = cirugias_ref.stream()
         
         total = 0
@@ -397,4 +512,8 @@ def get_estadisticas():
 # ============================================================================
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    flask_host = os.getenv('FLASK_HOST', '0.0.0.0')
+    flask_port = int(os.getenv('FLASK_PORT', 5000))
+    flask_debug = os.getenv('FLASK_DEBUG', 'True').lower() == 'true'
+    
+    app.run(debug=flask_debug, host=flask_host, port=flask_port)

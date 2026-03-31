@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Sistema de Cirugías Cardiovasculares</title>
+    <title>Registro - Sistema de Cirugías Cardiovasculares</title>
     <link rel="shortcut icon" href="../static/gqg ICN.png" type="image/x-icon">
     <style>
         * {
@@ -45,27 +45,6 @@
             max-width: 440px;
             position: relative;
             z-index: 1;
-            max-height: 90vh;
-            overflow-y: auto;
-            overflow-x: hidden;
-        }
-
-        .login-container::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .login-container::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 10px;
-        }
-
-        .login-container::-webkit-scrollbar-thumb {
-            background: #dc2626;
-            border-radius: 10px;
-        }
-
-        .login-container::-webkit-scrollbar-thumb:hover {
-            background: #991b1b;
         }
 
         .login-container::before {
@@ -162,7 +141,6 @@
             transition: all 0.3s ease;
             background: #fafafa;
             color: #1a1a1a;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         input[type="email"]:focus,
@@ -253,6 +231,16 @@
             font-weight: 600;
         }
 
+        .footer a {
+            color: #dc2626;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
         /* Animación de entrada */
         @keyframes fadeInUp {
             from {
@@ -278,7 +266,7 @@
             }
             50% {
                 box-shadow: 
-                    0 10px 40px rgba(220, 38, 38, 0.4),
+                    0 10px 40px rgba(220, 38, 38, 0.5),
                     inset 0 -2px 10px rgba(0, 0, 0, 0.2);
             }
         }
@@ -293,25 +281,12 @@
         <div class="login-header">
             <div class="logo-container">
                 <div class="logo">
-                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                        <!-- Corazón estilizado médico -->
-                        <path d="M50 85 C30 70, 15 55, 15 40 C15 25, 25 15, 35 15 C42 15, 47 20, 50 25 C53 20, 58 15, 65 15 C75 15, 85 25, 85 40 C85 55, 70 70, 50 85 Z" 
-                              fill="white" 
-                              opacity="0.95"/>
-                        <!-- Línea de ECG integrada -->
-                        <path d="M20 50 L30 50 L35 35 L40 65 L45 45 L50 50 L80 50" 
-                              stroke="white" 
-                              stroke-width="2.5" 
-                              fill="none" 
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              opacity="0.9"/>
-                    </svg>
+                    ❤️
                 </div>
             </div>
             <div class="subtitle">Sistema Médico</div>
             <h1>Cirugías Cardiovasculares</h1>
-            <p>Gestión Quirúrgica de Excelencia</p>
+            <p>Crear Cuenta</p>
         </div>
 
         {% if error %}
@@ -320,7 +295,7 @@
         </div>
         {% endif %}
 
-        <form method="POST" action="/login">
+        <form method="POST" action="/register">
             <div class="form-group">
                 <label for="email">Email</label>
                 <div class="input-wrapper">
@@ -342,14 +317,14 @@
                         type="password" 
                         id="password" 
                         name="password" 
-                        placeholder="Ingresa tu contraseña"
+                        placeholder="Mínimo 6 caracteres"
                         required
                     >
                 </div>
             </div>
 
             <button type="submit" class="btn-login">
-                Ingresar al Sistema
+                Crear Cuenta
             </button>
         </form>
 
@@ -357,16 +332,13 @@
             <strong>Sistema de Registro Quirúrgico</strong><br>
             Cardiovascular · Seguro · Profesional
             <p style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #f0f0f0;">
-                ¿No tienes cuenta? <a href="/register" style="color: #dc2626; font-weight: 600; text-decoration: none;">Regístrate aquí</a>
+                ¿Ya tienes cuenta? <a href="/login">Inicia sesión aquí</a>
             </p>
         </div>
     </div>
 
     <script>
-        document.getElementById('password').focus();
-        
-        // Prevenir copiar/pegar en producción si es necesario
-        // document.getElementById('password').addEventListener('paste', e => e.preventDefault());
+        document.getElementById('email').focus();
     </script>
 </body>
 </html>

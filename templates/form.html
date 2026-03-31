@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>G.Q.G - Formulario de Cirugía</title>
     <link rel="shortcut icon" href="../static/gqg ICN.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -556,23 +557,23 @@
 <body>
     <div class="header">
         <div class="header-content">
-            <h1>🫀 G.Q.G - Registro de Cirugía Cardiovascular</h1>
-            <a href="/" class="back-link">← Volver al Dashboard</a>
+            <h1><i class="fas fa-heartbeat"></i> G.Q.G - Registro de Cirugía Cardiovascular</h1>
+            <a href="/" class="back-link"><i class="fas fa-arrow-left"></i> Volver al Dashboard</a>
         </div>
     </div>
 
     <div class="form-container">
         <div id="alertSuccess" class="alert alert-success">
-            ✓ Cirugía guardada exitosamente
+            <i class="fas fa-check"></i> Cirugía guardada exitosamente
         </div>
         <div id="alertError" class="alert alert-error">
-            ✗ <span id="errorMessage"></span>
+            <i class="fas fa-times"></i> <span id="errorMessage"></span>
         </div>
 
         <form id="cirugiaForm">
             <!-- DATOS DEL PACIENTE -->
             <div class="form-section">
-                <h2>👤 Datos del Paciente</h2>
+                <h2><i class="fas fa-user"></i> Datos del Paciente</h2>
                 <div class="form-grid">
                     <div class="form-group">
                         <label class="label-required">Nombre Completo</label>
@@ -625,7 +626,7 @@
 
             <!-- ANTECEDENTES MÉDICOS -->
             <div class="form-section">
-                <h2>📋 Antecedentes Médicos</h2>
+                <h2><i class="fas fa-clipboard"></i> Antecedentes Médicos</h2>
                 <div class="form-grid">
                     <div class="form-group form-grid-full">
                         <label>Diagnóstico Principal</label>
@@ -692,7 +693,7 @@
 
             <!-- DATOS DE LA CIRUGÍA -->
             <div class="form-section">
-                <h2>🔬 Datos de la Cirugía</h2>
+                <h2><i class="fas fa-flask"></i> Datos de la Cirugía</h2>
                 <div class="form-grid">
                     <div class="form-group">
                         <label class="label-required">Fecha de Cirugía</label>
@@ -806,7 +807,7 @@
 
             <!-- DATOS CARDIOVASCULARES ESPECÍFICOS -->
             <div class="form-section">
-                <h2>❤️ Datos Cardiovasculares</h2>
+                <h2><i class="fas fa-heart"></i> Datos Cardiovasculares</h2>
                 <div class="form-grid">
                     <div class="form-group">
                         <label>FEVI Preoperatoria (%)</label>
@@ -853,7 +854,7 @@
 
             <!-- DATOS POSTOPERATORIOS -->
             <div class="form-section">
-                <h2>🏥 Postoperatorio</h2>
+                <h2><i class="fas fa-hospital-alt"></i> Postoperatorio</h2>
                 <div class="form-grid">
                     <div class="form-group">
                         <label>Estado Postoperatorio</label>
@@ -890,7 +891,7 @@
 
             <!-- SEGUIMIENTO -->
             <div class="form-section">
-                <h2>📊 Seguimiento y Notas</h2>
+                <h2><i class="fas fa-chart-bar"></i> Seguimiento y Notas</h2>
                 <div class="form-grid">
                     <div class="form-group">
                         <label>Fecha de Alta</label>
@@ -908,7 +909,7 @@
             </div>
 
             <div class="form-actions">
-                <button type="submit" class="btn btn-primary" id="submitBtn">💾 Guardar Cirugía</button>
+                <button type="submit" class="btn btn-primary" id="submitBtn"><i class="fas fa-save"></i> Guardar Cirugía</button>
                 <a href="/" class="btn btn-secondary">Cancelar</a>
             </div>
         </form>
@@ -932,8 +933,8 @@
         
         if (cirugiaId) {
             editMode = true;
-            document.querySelector('.header h1').textContent = '🫀 G.Q.G - Editar Cirugía';
-            document.getElementById('submitBtn').innerHTML = '💾 Actualizar Cirugía';
+            document.querySelector('.header h1').innerHTML = '<i class="fas fa-heartbeat"></i> G.Q.G - Editar Cirugía';
+            document.getElementById('submitBtn').innerHTML = '<i class="fas fa-save"></i> Actualizar Cirugía';
             await cargarDatosCirugia(cirugiaId);
         }
         
@@ -1000,7 +1001,7 @@
         const submitBtn = document.getElementById('submitBtn');
         const originalBtnText = submitBtn.innerHTML;
         submitBtn.disabled = true;
-        submitBtn.innerHTML = '⏳ Guardando...';
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
         
         document.getElementById('loadingOverlay').style.display = 'flex';
         
