@@ -30,22 +30,22 @@ SISTEMA_PASSWORD = os.getenv('SISTEMA_PASSWORD')
 # ============================================================================
 # INICIALIZACIÓN DE FIREBASE
 # ============================================================================
-# Cargar credenciales desde variable de entorno (soporta JSON string o Base64)
-firebase_credentials_json = os.getenv('FIREBASE_CREDENTIALS_JSON')
+# Cargar credenciales desde variable de entorno (Base64 o JSON string)
 firebase_credentials_base64 = os.getenv('FIREBASE_CREDENTIALS_BASE64')
+firebase_credentials_json = os.getenv('FIREBASE_CREDENTIALS_JSON')
 
-if not firebase_credentials_json and not firebase_credentials_base64:
+# Determinar cuál usar (Base64 tiene prioridad)
+if firebase_credentials_base64:
+    try:
+        firebase_credentials_json = base64.b64decode(firebase_credentials_base64).decode('utf-8')
+    except Exception as e:
+        raise ValueError(f"Error decodificando FIREBASE_CREDENTIALS_BASE64: {str(e)}") from e
+elif not firebase_credentials_json:
     raise ValueError(
-        "Error: Ni FIREBASE_CREDENTIALS_JSON ni FIREBASE_CREDENTIALS_BASE64 están configuradas.\n"
-        "Opción 1: Usa FIREBASE_CREDENTIALS_BASE64 (recomendado para producción)\n"
-        "Opción 2: Usa FIREBASE_CREDENTIALS_JSON (para desarrollo local)"
+        "Error: Debes configurar FIREBASE_CREDENTIALS_BASE64 o FIREBASE_CREDENTIALS_JSON en variables de entorno"
     )
 
 try:
-    # Si vienen en base64, decodificar primero
-    if firebase_credentials_base64:
-        firebase_credentials_json = base64.b64decode(firebase_credentials_base64).decode('utf-8')
-    
     firebase_credentials_dict = json.loads(firebase_credentials_json)
     cred = credentials.Certificate(firebase_credentials_dict)
     firebase_admin.initialize_app(cred)
