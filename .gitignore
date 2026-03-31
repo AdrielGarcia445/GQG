@@ -73,4 +73,5 @@ htmlcov/
 cirugias_*.xlsx
 
 .env.example
-
+FIX_JWT_SIGNATURE.md
+encode_firebase_credentials.py

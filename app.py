@@ -1,3 +1,4 @@
+import base64
 import io
 import json
 import os
@@ -29,21 +30,29 @@ SISTEMA_PASSWORD = os.getenv('SISTEMA_PASSWORD')
 # ============================================================================
 # INICIALIZACIÓN DE FIREBASE
 # ============================================================================
-# Cargar credenciales desde variable de entorno (JSON string)
+# Cargar credenciales desde variable de entorno (soporta JSON string o Base64)
 firebase_credentials_json = os.getenv('FIREBASE_CREDENTIALS_JSON')
-if not firebase_credentials_json:
+firebase_credentials_base64 = os.getenv('FIREBASE_CREDENTIALS_BASE64')
+
+if not firebase_credentials_json and not firebase_credentials_base64:
     raise ValueError(
-        "Error: FIREBASE_CREDENTIALS_JSON no está configurada en el archivo .env. "
-        "Asegúrate de que contiene las credenciales de Firebase en formato JSON."
+        "Error: Ni FIREBASE_CREDENTIALS_JSON ni FIREBASE_CREDENTIALS_BASE64 están configuradas.\n"
+        "Opción 1: Usa FIREBASE_CREDENTIALS_BASE64 (recomendado para producción)\n"
+        "Opción 2: Usa FIREBASE_CREDENTIALS_JSON (para desarrollo local)"
     )
 
 try:
+    # Si vienen en base64, decodificar primero
+    if firebase_credentials_base64:
+        firebase_credentials_json = base64.b64decode(firebase_credentials_base64).decode('utf-8')
+    
     firebase_credentials_dict = json.loads(firebase_credentials_json)
     cred = credentials.Certificate(firebase_credentials_dict)
     firebase_admin.initialize_app(cred)
     db = firestore.client()
+    print("✅ Firebase inicializado correctamente")
 except json.JSONDecodeError as e:
-    raise ValueError(f"Error al parsear FIREBASE_CREDENTIALS_JSON: {str(e)}") from e
+    raise ValueError(f"Error al parsear credenciales Firebase: {str(e)}") from e
 except Exception as e:
     raise ValueError(f"Error al inicializar Firebase: {str(e)}") from e
 
