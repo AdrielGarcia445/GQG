@@ -46,39 +46,21 @@ SISTEMA_PASSWORD = os.getenv('SISTEMA_PASSWORD')
 # ============================================================================
 def load_firebase_credentials():
     """
-    Carga credenciales de Firebase desde múltiples fuentes:
-    1. Variable de entorno FIREBASE_CREDENTIALS_BASE64 (para Render/producción)
-    2. Archivo firebase-credentials.json (desarrollo local)
+    Carga credenciales de Firebase desde la variable de entorno FIREBASE_CREDENTIALS_BASE64.
+    Las credenciales están pre-configuradas en el servidor.
     """
-    firebase_credentials_dict = None
-    source = None
-    
-    # Opción 1: Credenciales desde Base64 (Render/producción)
     firebase_credentials_base64 = os.getenv('FIREBASE_CREDENTIALS_BASE64')
-    if firebase_credentials_base64:
-        try:
-            decoded = base64.b64decode(firebase_credentials_base64).decode('utf-8')
-            firebase_credentials_dict = json.loads(decoded)
-            source = "FIREBASE_CREDENTIALS_BASE64 (variable de entorno)"
-        except Exception as e:
-            print(f"⚠️  Error decodificando Base64: {e}")
     
-    # Opción 2: Desde archivo JSON (desarrollo local)
-    if not firebase_credentials_dict:
-        try:
-            credentials_file = os.path.join(os.path.dirname(__file__), 'firebase-credentials.json')
-            with open(credentials_file, 'r') as f:
-                firebase_credentials_dict = json.load(f)
-                source = "firebase-credentials.json (archivo local)"
-        except Exception as e:
-            print(f"⚠️  Error leyendo firebase-credentials.json: {e}")
+    if not firebase_credentials_base64:
+        raise ValueError("Variable de entorno FIREBASE_CREDENTIALS_BASE64 no configurada. "
+                        "Las credenciales de Firebase deben estar disponibles en el servidor.")
     
-    if not firebase_credentials_dict:
-        raise ValueError("No se encontraron credenciales de Firebase. "
-                        "Asegúrate de que firebase-credentials.json existe o "
-                        "que la variable FIREBASE_CREDENTIALS_BASE64 está configurada.")
-    
-    return firebase_credentials_dict, source
+    try:
+        decoded = base64.b64decode(firebase_credentials_base64).decode('utf-8')
+        firebase_credentials_dict = json.loads(decoded)
+        return firebase_credentials_dict, "FIREBASE_CREDENTIALS_BASE64"
+    except Exception as e:
+        raise ValueError(f"Error al decodificar credenciales de Firebase: {str(e)}")
 
 # Cargar credenciales
 firebase_credentials_dict, credentials_source = load_firebase_credentials()
