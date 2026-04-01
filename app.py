@@ -1,6 +1,7 @@
 import base64
 import io
 import json
+import logging
 import os
 from datetime import datetime
 from functools import wraps
@@ -19,6 +20,19 @@ load_dotenv()
 app = Flask(__name__)
 
 # ============================================================================
+# CONFIGURACIÓN DE LOGGING
+# ============================================================================
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler('app.log'),
+        logging.StreamHandler()
+    ]
+)
+logger = logging.getLogger(__name__)
+
+# ============================================================================
 # CONFIGURACIÓN DE SEGURIDAD
 # ============================================================================
 # Cargar desde variables de entorno
@@ -30,31 +44,61 @@ SISTEMA_PASSWORD = os.getenv('SISTEMA_PASSWORD')
 # ============================================================================
 # INICIALIZACIÓN DE FIREBASE
 # ============================================================================
-# Cargar credenciales desde variable de entorno (Base64 o JSON string)
-firebase_credentials_base64 = os.getenv('FIREBASE_CREDENTIALS_BASE64')
-firebase_credentials_json = os.getenv('FIREBASE_CREDENTIALS_JSON')
+def load_firebase_credentials():
+    """
+    Carga credenciales de Firebase desde múltiples fuentes:
+    1. Variable de entorno FIREBASE_CREDENTIALS_BASE64 (para Render/producción)
+    2. Archivo firebase-credentials.json (desarrollo local)
+    """
+    firebase_credentials_dict = None
+    source = None
+    
+    # Opción 1: Credenciales desde Base64 (Render/producción)
+    firebase_credentials_base64 = os.getenv('FIREBASE_CREDENTIALS_BASE64')
+    if firebase_credentials_base64:
+        try:
+            decoded = base64.b64decode(firebase_credentials_base64).decode('utf-8')
+            firebase_credentials_dict = json.loads(decoded)
+            source = "FIREBASE_CREDENTIALS_BASE64 (variable de entorno)"
+        except Exception as e:
+            print(f"⚠️  Error decodificando Base64: {e}")
+    
+    # Opción 2: Desde archivo JSON (desarrollo local)
+    if not firebase_credentials_dict:
+        try:
+            credentials_file = os.path.join(os.path.dirname(__file__), 'firebase-credentials.json')
+            with open(credentials_file, 'r') as f:
+                firebase_credentials_dict = json.load(f)
+                source = "firebase-credentials.json (archivo local)"
+        except Exception as e:
+            print(f"⚠️  Error leyendo firebase-credentials.json: {e}")
+    
+    if not firebase_credentials_dict:
+        raise ValueError("No se encontraron credenciales de Firebase. "
+                        "Asegúrate de que firebase-credentials.json existe o "
+                        "que la variable FIREBASE_CREDENTIALS_BASE64 está configurada.")
+    
+    return firebase_credentials_dict, source
 
-# Determinar cuál usar (Base64 tiene prioridad)
-if firebase_credentials_base64:
-    try:
-        firebase_credentials_json = base64.b64decode(firebase_credentials_base64).decode('utf-8')
-    except Exception as e:
-        raise ValueError(f"Error decodificando FIREBASE_CREDENTIALS_BASE64: {str(e)}") from e
-elif not firebase_credentials_json:
-    raise ValueError(
-        "Error: Debes configurar FIREBASE_CREDENTIALS_BASE64 o FIREBASE_CREDENTIALS_JSON en variables de entorno"
-    )
+# Cargar credenciales
+firebase_credentials_dict, credentials_source = load_firebase_credentials()
 
 try:
-    firebase_credentials_dict = json.loads(firebase_credentials_json)
+    print(f"🔐 Inicializando Firebase...")
+    print(f"   Proyecto: {firebase_credentials_dict.get('project_id')}")
+    print(f"   Email: {firebase_credentials_dict.get('client_email')}")
+    print(f"   Credenciales desde: {credentials_source}")
+    
+    # Inicializar Firebase
     cred = credentials.Certificate(firebase_credentials_dict)
     firebase_admin.initialize_app(cred)
     db = firestore.client()
+    
     print("✅ Firebase inicializado correctamente")
-except json.JSONDecodeError as e:
-    raise ValueError(f"Error al parsear credenciales Firebase: {str(e)}") from e
+    
 except Exception as e:
-    raise ValueError(f"Error al inicializar Firebase: {str(e)}") from e
+    print(f"❌ Error al inicializar Firebase: {str(e)}")
+    raise
 
 # Nombre de las colecciones en Firestore (desde variables de entorno)
 COLLECTION_NAME = os.getenv('FIREBASE_COLLECTION_NAME', 'cirugias_cardiovasculares')
@@ -164,8 +208,11 @@ def register():
         email = request.form.get('email', '').strip().lower()
         password = request.form.get('password', '')
         
+        logger.info(f"Intento de registro con email: {email}")
+        
         # Validar datos
         if not email or not password:
+            logger.warning(f"Intento de registro fallido - datos incompletos. Email: {email}")
             return render_template('register.html', error='Email y contraseña son requeridos')
         
         # Verificar si el email ya existe
@@ -173,8 +220,10 @@ def register():
             existing = list(db.collection(USERS_COLLECTION)
                           .where('email', '==', email).limit(1).stream())
             if existing:
+                logger.warning(f"Intento de registro fallido - email ya existe: {email}")
                 return render_template('register.html', error='El email ya está registrado')
         except Exception as e:
+            logger.error(f"Error al verificar email durante registro: {email} - {str(e)}")
             return render_template('register.html', error=f'Error al verificar email: {str(e)}')
         
         try:
@@ -193,8 +242,10 @@ def register():
             session['user_id'] = user_ref.id
             session['email'] = email
             
+            logger.info(f"Registro exitoso - Usuario creado: {email} (ID: {user_ref.id})")
             return redirect(url_for('dashboard'))
         except Exception as e:
+            logger.error(f"Error al registrar usuario: {email} - {str(e)}")
             return render_template('register.html', error=f'Error al registrar: {str(e)}')
     
     # Si ya está autenticado, redirigir al dashboard
@@ -211,16 +262,20 @@ def login():
         email = request.form.get('email', '').strip().lower()
         password = request.form.get('password', '')
         
+        logger.info(f"Intento de login - Email: {email}")
+        
         # Verificar si es admin
         if password == SISTEMA_PASSWORD:
             session['authenticated'] = True
             session['is_admin'] = True
             session['user_id'] = None
             session['email'] = 'admin'
+            logger.info(f"Login exitoso - Acceso ADMIN")
             return redirect(url_for('dashboard'))
         
         # Validar datos
         if not email or not password:
+            logger.warning(f"Intento de login fallido - datos incompletos. Email: {email}")
             return render_template('login.html', error='Email y contraseña son requeridos')
         
         try:
@@ -229,6 +284,7 @@ def login():
                           .where('email', '==', email).limit(1).stream())
             
             if not snapshot:
+                logger.warning(f"Intento de login fallido - usuario no encontrado: {email}")
                 return render_template('login.html', error='Usuario o contraseña incorrectos')
             
             user_doc = snapshot[0]
@@ -236,6 +292,7 @@ def login():
             
             # Verificar contraseña
             if not check_password_hash(user_data.get('password', ''), password):
+                logger.warning(f"Intento de login fallido - contraseña incorrecta: {email}")
                 return render_template('login.html', error='Usuario o contraseña incorrectos')
             
             # Iniciar sesión
@@ -244,8 +301,10 @@ def login():
             session['user_id'] = user_doc.id
             session['email'] = email
             
+            logger.info(f"Login exitoso - Usuario: {email} (ID: {user_doc.id})")
             return redirect(url_for('dashboard'))
         except Exception as e:
+            logger.error(f"Error durante login - Email: {email} - {str(e)}")
             return render_template('login.html', error=f'Error al iniciar sesión: {str(e)}')
     
     # Si ya está autenticado, redirigir al dashboard

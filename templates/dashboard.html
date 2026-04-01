@@ -47,6 +47,40 @@
             display: flex;
             align-items: center;
             gap: 15px;
+            justify-content: space-between;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .logout-btn i {
+            font-size: 14px;
         }
 
         .header-logo {
@@ -430,6 +464,21 @@
 
             .header-content {
                 gap: 12px;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .header-content > div:first-child {
+                width: 100%;
+            }
+
+            .header-actions {
+                width: 100%;
+                justify-content: flex-end;
+            }
+
+            .logout-btn {
+                width: auto;
             }
 
             .header-logo {
@@ -657,12 +706,17 @@
 <body>
     <div class="header">
         <div class="header-content">
-            <div class="header-logo">
-                <img src="../static/GQG logo2.png" height="40px" alt="">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <div class="header-logo">
+                    <img src="../static/GQG logo2.png" height="40px" alt="">
+                </div>
+                <div class="header-text">
+                    <h1>G.Q.G</h1>
+                    <p>Gestor Quirúrgico García - Sistema de Registro de Cirugías Cardiovasculares</p>
+                </div>
             </div>
-            <div class="header-text">
-                <h1>G.Q.G</h1>
-                <p>Gestor Quirúrgico García - Sistema de Registro de Cirugías Cardiovasculares</p>
+            <div class="header-actions">
+                <a href="/logout" class="logout-btn"><i class="fas fa-sign-out-alt"></i><span>Salir</span></a>
             </div>
         </div>
     </div>
